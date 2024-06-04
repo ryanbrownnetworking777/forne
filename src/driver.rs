@@ -83,7 +83,7 @@ impl<'e, 's> Driver<'e, 's> {
             method: None,
             set,
             max_count: None,
-            curr_count: 0,
+            curr_count: 0, 
             target: CardType::All,
             latest_card: None,
 
