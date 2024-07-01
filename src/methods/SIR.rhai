@@ -1,4 +1,4 @@
-const RESPONSES = ["day", "week", "month"]
+const RESPONSES = ["1","2","3"]
 
 
 fn get_weight(data, difficult) {
@@ -6,4 +6,10 @@ fn get_weight(data, difficult) {
    return data.weight;
 }
 
+fn get_default_metadata() {
+  return #{
+      //今日
+      next_review_date:  
+  };
+}
 
