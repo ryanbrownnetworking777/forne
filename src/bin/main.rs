@@ -21,8 +21,12 @@ fn main() -> anyhow::Result<()> {
         } => {
             let contents =
                 fs::read_to_string(input).with_context(|| "failed to read from source file")?;
+            println!("{}", contents);
             let adapter_script =
                 fs::read_to_string(adapter).with_context(|| "failed to read adapter script")?;
+
+            println!("{}", adapter_script);
+
             let method = method_from_string(method)?;
 
             let forne = Forne::new_set(contents, &adapter_script, method)?;
