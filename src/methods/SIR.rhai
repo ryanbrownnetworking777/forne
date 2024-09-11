@@ -22,7 +22,7 @@ fn adjust_card(res, data, difficult) {
     data.easiness = max(1.3, data.easiness + 0.1 - (3.0 - quality) * (0.15 + (3.0 - quality) * 0.05));
     
     if quality == 1 {
-        data.repetitions = 0;
+        data.repetitions = 1;
     } else {
         data.repetitions += 1;
     }
@@ -30,10 +30,10 @@ fn adjust_card(res, data, difficult) {
     let now = get_seconds_since_epoch();
     let seconds_in_day = 60 * 60 * 24;
     
-    if data.repetitions == 0 {
+    if data.repetitions == 1 {
         // 難しかった場合は1日後
         data.interval = 1;
-    } else if data.repetitions == 1 {
+    } else if data.repetitions > 1 & <7 {
         // 2回目の正解は1週間後
         data.interval = 7;
     } else {
