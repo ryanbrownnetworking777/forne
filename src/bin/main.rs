@@ -236,6 +236,8 @@ fn drive<'a>(mut driver: forne::Driver<'a, 'a>, set_file: &str) -> anyhow::Resul
         println!("A: {}", card.answer);
         stdout.reset()?;
 
+        println!("Next review in seconds: {}", card.next_review);
+
         // Prompt the user for a response based on the method (or y/n if this is a test)
         let res = loop {
             print!(
