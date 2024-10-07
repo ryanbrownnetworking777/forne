@@ -23,17 +23,20 @@ fn adjust_card(res, data, difficult) {
     if quality == 1 {
         // 難しかった場合は1日後
         data.interval = 1;
-    } else if quality == 7 {
+        data.next_review = now + seconds_in_day * data.interval;
+    } else if quality == 2 {
         // 2回目の正解は1週間後
         data.interval = 7;
+        data.next_review = now + seconds_in_day * data.interval;
+
     } else {
         // 3回目以降の正解は1ヶ月後
         data.interval = 30;
+        data.next_review = now + seconds_in_day * data.interval;
     }
     
+    data.repetitions = data.repetitions + 1;
     
-    data.next_review = now + seconds_in_day * data.interval;
-    println(data.next_review) 
     return [data, difficult];
 }
 

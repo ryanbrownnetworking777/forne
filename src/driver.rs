@@ -249,6 +249,7 @@ impl<'e, 's> Driver<'e, 's> {
                 let (method_data, difficult) =
                     (method.adjust_card)(response, card.method_data.clone(), card.difficult)?;
                 card.method_data = method_data;
+                println!("{}",card.method_data);
                 if self.mutate_difficulty {
                     card.difficult = difficult;
                 }
