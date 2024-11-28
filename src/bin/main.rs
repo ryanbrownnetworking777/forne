@@ -58,6 +58,29 @@ fn main() -> anyhow::Result<()> {
 
             println!("Set updated successfully!");
         }
+        Command::Add {
+            set: set_file,
+            source,
+            adapter,
+            method,
+        } => {
+            let json =
+                fs::read_to_string(&set_file).with_context(|| "failed to read from set file")?;
+            let set = Set::from_json(&json)?;
+            let source =
+                fs::read_to_string(source).with_context(|| "failed to read from source file")?;
+            let adapter_script =
+                fs::read_to_string(adapter).with_context(|| "failed to read adapter script")?;
+            let method = method_from_string(method)?;
+
+            let mut forne = Forne::from_set(set);
+            forne.add(source, &adapter_script, method)?;
+            let new_json = forne.save_set()?;
+            fs::write(set_file, new_json)
+                .with_context(|| "failed to write appended set to output file")?;
+
+            println!("Set appended successfully!");
+        }
         Command::Learn {
             set: set_file,
             method,

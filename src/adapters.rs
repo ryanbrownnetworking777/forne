@@ -60,6 +60,8 @@ impl Set {
             let elems: Vec<String> = dyn_elem
                 .into_typed_array()
                 .map_err(|_| anyhow!("couldn't parse adapter results"))?;
+            //TO-DO
+            // Read set data into memory to get the method metadata.
 
             let new_card = Card {
                 question: elems
@@ -73,6 +75,9 @@ impl Set {
                 seen_in_test: false,
                 difficult: false,
                 starred: false,
+                //This is why updating nukes current progress. 
+                // There either needs to be a new method for addition, or this
+                // needs to be changed to not nuke the metadata. 
                 method_data: (method.get_default_metadata)()?,
             };
             // If we've already got this question, update the answer if necessary, otherwise add it afresh
@@ -87,6 +92,62 @@ impl Set {
             }
         }
 
+        
+    pub(crate) fn add_with_adapter(
+        &mut self,
+        script: &str,
+        src: String,
+        method: RawMethod,
+        engine: &Engine,
+    ) -> Result<()> {
+        let method = method.into_method(engine)?;
+
+        let mut scope = Scope::new();
+        scope.push_constant("SOURCE", src);
+        // This will get *all* the cards in the source, which we will then compare
+        // with what we already have
+        let raw_array: Vec<Dynamic> = engine
+            .eval_with_scope(&mut scope, script)
+            .with_context(|| "failed to run adapter script")?;
+
+        for dyn_elem in raw_array {
+            let elems: Vec<String> = dyn_elem
+                .into_typed_array()
+                .map_err(|_| anyhow!("couldn't parse adapter results"))?;
+            //TO-DO
+            // Read set data into memory to get the method metadata.
+
+            let new_card = Card {
+                question: elems
+                    .get(0)
+                    .ok_or_else(|| anyhow!("adapter did not return question for card"))?
+                    .to_string(),
+                answer: elems
+                    .get(1)
+                    .ok_or_else(|| anyhow!("adapter did not return answer for card"))?
+                    .to_string(),
+                seen_in_test: false,
+                difficult: false,
+                starred: false,
+                //This is why updating nukes current progress. 
+                // There either needs to be a new method for addition, or this
+                // needs to be changed to not nuke the metadata. 
+                method_data: (method.get_default_metadata)()?,
+            };
+            // If we've already got this question, update the answer if necessary, otherwise add it afresh
+            let found = self
+                .cards
+                .iter_mut()
+                .find(|(_id, card)| card.question == new_card.question);
+            if let Some((_id, card)) = found {
+                //既存method_dataを獲得。
+                //new_card.method_dataに設定
+                new_card.method_data = card.method_data;
+                *card = new_card;
+            } else {
+                self.cards.insert(Uuid::new_v4(), new_card);
+            }
+        }
         Ok(())
     }
 }

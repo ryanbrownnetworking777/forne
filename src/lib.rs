@@ -49,6 +49,20 @@ impl Forne {
         self.set
             .update_with_adapter(adapter_script, src, raw_method, &self.rhai_engine)
     }
+
+    ///TO-DO:
+    ///Create a function that will be something like "add" or "append" that will append
+    ///new entries into the set without overwriting the method data of the cards. Base this
+    ///off of fn update above and update_with_adapter in adapters.rs
+    pub fn add(
+        &mut self,
+        src: String,
+        adapter_script: &str,
+        raw_method: RawMethod,
+    ) -> Result<()> {
+        self.set
+            .add_with_adapter(adapter_script, src, raw_method, &self.rhai_engine)
+    }
     /// Creates a new Forne engine. While not inherently expensive, this should generally only be called once, or when
     /// the system needs to restart.
     pub fn from_set(set: Set) -> Self {
